@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SearchMyItems</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px 40px 12px 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-bar:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            display: none;
+            padding: 5px;
+            font-size: 18px;
+        }
+
+        .clear-btn:hover {
+            color: #333;
+        }
+
+        .suggestions-box {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 5px;
+        }
+
+        .suggestion-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+.suggestions-section {
+    border-bottom: 1px solid #eee;
+}
+
+.suggestions-section:last-child {
+    border-bottom: none;
+}
+
+.suggestion-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .suggestion-icon {
+            font-size: 20px;
+            color: #666;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .category-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .category-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .category-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .category-description {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .back-btn {
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: none;
+            transition: background-color 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #0056b3;
+        }
+
+        .shop-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: 
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .shop-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .shop-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .shop-info {
+            flex: 1;
+        }
+
+        .shop-info h2, .shop-info h3 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .shop-address {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .product-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .product-header {
+            display: 
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .product-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            color: #007bff;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .product-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .shop-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .shop-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+             
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search for products or shops...">
+            <button class="clear-btn">✕</button>
+            <div class="suggestions-box"></div>
+        </div>
+        <button class="back-btn">← Back</button>
+        <div class="categories"></div>
+    </div>
+   
+    <script>
+    // Database
+// Database
+const database = {
+    categories: [
+        {
+            name: 'Electronics',
+            icon: '📱',
+            description: 'Gadgets, devices, and tech accessories'
+        },
+        {
+            name: 'Fashion',
+            icon: '👕',
+            description: 'Clothing, shoes, and accessories'
+        },
+        {
+            name: 'Groceries',
+            icon: '🛒',
+            description: 'Fresh food and daily essentials'
+        },
+        {
+            name: 'Home & Kitchen',
+            icon: '🏠',
+            description: 'Furniture and household items'
+        },
+        {
+            name: 'Sports',
+            icon: '⚽',
+            description: 'Sports equipment and activewear'
+        }
+    ],
+    areas: [
+        'North City', 'South City', 'East City', 'West City', 'Downtown'
+    ],
+    shops: [
+        {
+            id: 1,
+            name: 'TechHub',
+            category: 'Electronics',
+            area: 'North City',
+            address: '123 Tech Street, North City',
+            image: '/IMG-20241113-WA0001.jpg',
+            description: 'Your one-stop shop for all electronics',
+            products: [
+                {
+                    id: 1,
+                    name: 'Smartphone X',
+                    price: 599.99,
+                    description: 'Latest smartphone with amazing features. 6.5" OLED display, 5G connectivity, 128GB storage',
+                    image: '/api/placeholder/150/150'
+                },
+                {
+                    id: 2,
+                    name: 'Laptop Pro',
+                    price: 1299.99,
+                    description: '15" ultra-slim laptop with 16GB RAM, 512GB SSD, and dedicated graphics',
+                    image: '/api/placeholder/150/150'
+                }
+            ]
+        },
+        {
+            id: 2,
+            name: 'Fashion Zone',
+            category: 'Fashion',
+            area: 'Downtown',
+            address: '456 Fashion Ave, Downtown',
+            image: 'https://drive.google.com/file/d/16qEHikcwi_p8YgaWMSKIJFf0MAUoB5qA/uc?export=view&id=',
+            description: 'Trendy fashion for everyone',
+            products: [
+                {
+                    id: 3,
+                    name: 'Designer Jeans',
+                    price: 89.99,
+                    description: 'Premium quality designer jeans with perfect fit and comfort',
+                    image: 'https://media.istockphoto.com/id/1977348709/photo/laughing-young-businesswoman-talking-with-colleagues-in-an-office-hallway.webp?a=1&b=1&s=612x612&w=0&k=20&c=1QrGBVFBZyfg0zm_EETpeG49dbAjIPDEOxKRtf7L16Q='
+                },
+                {
+                    id: 4,
+                    name: 'Casual Sneakers',
+                    price: 69.99,
+                    description: 'Comfortable casual sneakers for daily wear',
+                    image: 'https://images.app.goo.gl/YQFDDw5ot2qsr6W4A'
+                }
+            ]
+        },
+        {
+            id: 3,
+            name: 'Fresh Mart',
+            category: 'Groceries',
+            area: 'East City',
+            address: '789 Fresh Street, East City',
+            image: '/api/placeholder/150/150',
+            description: 'Fresh groceries and daily essentials',
+            products: [
+                {
+                    id: 5,
+                    name: 'Organic Fruits Bundle',
+                    price: 29.99,
+                    description: 'Selection of fresh organic fruits',
+                    image: '/api/placeholder/150/150'
+                }
+            ]
+        }
+    ]
+};
+
+// DOM Elements
+const searchBar = document.querySelector('.search-bar');
+const clearBtn = document.querySelector('.clear-btn');
+const suggestionsBox = document.querySelector('.suggestions-box');
+const categoriesContainer = document.querySelector('.categories');
+const backBtn = document.querySelector('.back-btn');
+
+// State
+let currentView = 'categories';
+let selectedCategory = null;
+let selectedArea = null;
+let currentProduct = null;
+let currentShop = null;
+
+// Initialize
+function init() {
+    displayCategories();
+    setupEventListeners();
+}
+
+// Event Listeners
+function setupEventListeners() {
+    searchBar.addEventListener('keypress', handleSearch);
+    searchBar.addEventListener('input', handleInput);
+    clearBtn.addEventListener('click', clearSearch);
+    backBtn.addEventListener('click', handleBack);
+    
+    // Close suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!suggestionsBox.contains(e.target) && e.target !== searchBar) {
+            suggestionsBox.style.display = 'none';
+        }
+    });
+    
+    // Show/hide clear button based on input
+    searchBar.addEventListener('input', () => {
+        clearBtn.style.display = searchBar.value ? 'block' : 'none';
+    });
+}
+
+// Handle Search
+function handleSearch(e) {
+    if (e.key === 'Enter') {
+        const searchTerm = searchBar.value.toLowerCase();
+        const suggestions = getSuggestions(searchTerm);
+        displaySuggestions(suggestions);
+    }
+}
+
+// Handle Input
+function handleInput() {
+    const searchTerm = searchBar.value.toLowerCase();
+    if (searchTerm) {
+        const suggestions = getSuggestions(searchTerm);
+        displaySuggestions(suggestions);
+    } else {
+        suggestionsBox.style.display = 'none';
+    }
+}
+
+// Clear Search
+function clearSearch() {
+    searchBar.value = '';
+    suggestionsBox.style.display = 'none';
+    clearBtn.style.display = 'none';
+}
+
+// Get Suggestions
+function getSuggestions(term) {
+    const suggestions = {
+        shops: [],
+        products: []
+    };
+    
+    // Search shops
+    database.shops.forEach(shop => {
+        if (shop.name.toLowerCase().includes(term)) {
+            suggestions.shops.push({
+                type: 'shop',
+                item: shop
+            });
+        }
+        
+        // Search products
+        shop.products.forEach(product => {
+            if (product.name.toLowerCase().includes(term)) {
+                suggestions.products.push({
+                    type: 'product',
+                    item: product,
+                    shop: shop
+                });
+            }
+        });
+    });
+    
+    return suggestions;
+}
+
+// Display Suggestions
+function displaySuggestions(suggestions) {
+    suggestionsBox.innerHTML = '';
+    
+    const hasSuggestions = suggestions.shops.length > 0 || suggestions.products.length > 0;
+    
+    if (hasSuggestions) {
+        // Create shops section if there are shops
+        if (suggestions.shops.length > 0) {
+            const shopsSection = document.createElement('div');
+            shopsSection.className = 'suggestions-section';
+            shopsSection.innerHTML = `
+                <div class="suggestion-header" style="padding: 8px 15px; background: #f8f9fa; font-weight: bold; color: #666; font-size: 14px; border-bottom: 1px solid #eee;">
+                    Shops
+                </div>
+            `;
+            
+            suggestions.shops.forEach(suggestion => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.innerHTML = `
+                    <span class="suggestion-icon">🏪</span>
+                    <div>
+                        <strong>${suggestion.item.name}</strong>
+                        <div style="font-size: 12px; color: #666;">${suggestion.item.address}</div>
+                    </div>
+                `;
+                div.onclick = () => {
+                    displayShopDetails(suggestion.item);
+                    suggestionsBox.style.display = 'none';
+                };
+                shopsSection.appendChild(div);
+            });
+            
+            suggestionsBox.appendChild(shopsSection);
+        }
+        
+        // Create products section if there are products
+        if (suggestions.products.length > 0) {
+            const productsSection = document.createElement('div');
+            productsSection.className = 'suggestions-section';
+            productsSection.innerHTML = `
+                <div class="suggestion-header" style="padding: 8px 15px; background: #f8f9fa; font-weight: bold; color: #666; font-size: 14px; border-bottom: 1px solid #eee;">
+                    Products
+                </div>
+            `;
+            
+            suggestions.products.forEach(suggestion => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.innerHTML = `
+                    <span class="suggestion-icon">📦</span>
+                    <div>
+                        <strong>${suggestion.item.name}</strong>
+                        <div style="font-size: 12px; color: #666;">at ${suggestion.shop.name}</div>
+                    </div>
+                `;
+                div.onclick = () => {
+                    displayProductDetails(suggestion.item, suggestion.shop);
+                    suggestionsBox.style.display = 'none';
+                };
+                productsSection.appendChild(div);
+            });
+            
+            suggestionsBox.appendChild(productsSection);
+        }
+        
+        suggestionsBox.style.display = 'block';
+    } else {
+        suggestionsBox.style.display = 'none';
+    }
+}
+
+// Display Categories
+function displayCategories() {
+    categoriesContainer.innerHTML = '';
+    currentView = 'categories';
+    backBtn.style.display = 'none';
+    database.categories.forEach(category => {
+        const div = document.createElement('div');
+        div.className = 'category-card';
+        div.innerHTML = `
+            <div class="category-icon">${category.icon}</div>
+            <div class="category-name">${category.name}</div>
+            <div class="category-description">${category.description}</div>
+        `;
+        div.onclick = () => selectCategory(category.name);
+        categoriesContainer.appendChild(div);
+    });
+}
+
+// Select Category
+function selectCategory(category) {
+    selectedCategory = category;
+    displayAreas();
+}
+
+// Display Areas
+function displayAreas() {
+    categoriesContainer.innerHTML = '';
+    currentView = 'areas';
+    backBtn.style.display = 'block';
+    
+    database.areas.forEach(area => {
+        const div = document.createElement('div');
+        div.className = 'category-card';
+        div.innerHTML = `
+            <div class="category-icon">📍</div>
+            <div class="category-name">${area}</div>
+            <div class="category-description">Explore shops in ${area}</div>
+        `;
+        div.onclick = () => selectArea(area);
+        categoriesContainer.appendChild(div);
+    });
+}
+
+// Select Area
+function selectArea(area) {
+    selectedArea = area;
+    displayShops();
+}
+
+// Display Shops
+function displayShops() {
+    categoriesContainer.innerHTML = '';
+    currentView = 'shops';
+    backBtn.style.display = 'block';
+    
+    const shops = database.shops.filter(shop => 
+        shop.category === selectedCategory && shop.area === selectedArea
+    );
+    
+    if (shops.length === 0) {
+        categoriesContainer.innerHTML = `
+            <div class="shop-card">
+                <p>No shops found in ${selectedArea} for ${selectedCategory}</p>
+            </div>
+        `;
+        return;
+    }
+    
+    shops.forEach(shop => {
+        const div = document.createElement('div');
+        div.className = 'shop-card';
+        div.innerHTML = `
+            <img src="${shop.image}" alt="${shop.name}" class="shop-image">
+            <div class="shop-info">
+                <h3>${shop.name}</h3>
+                <p class="shop-address">${shop.address}</p>
+                <p class="category-description">${shop.description}</p>
+            </div>
+        `;
+        div.onclick = () => displayShopDetails(shop);
+        categoriesContainer.appendChild(div);
+    });
+}
+
+// Display Shop Details
+function displayShopDetails(shop) {
+    categoriesContainer.innerHTML = '';
+    currentView = 'shop-details';
+    currentShop = shop;
+    backBtn.style.display = 'block';
+    
+    const shopDiv = document.createElement('div');
+    shopDiv.className = 'shop-card';
+    shopDiv.style.cursor = 'default';
+    shopDiv.innerHTML = `
+        <img src="${shop.image}" alt="${shop.name}" class="shop-image">
+        <div class="shop-info">
+            <h2>${shop.name}</h2>
+            <p class="shop-address">${shop.address}</p>
+            <p class="category-description">${shop.description}</p>
+        </div>
+    `;
+    categoriesContainer.appendChild(shopDiv);
+    
+    const productsTitle = document.createElement('h3');
+    productsTitle.style.margin = '30px 0 20px';
+    productsTitle.style.color = '#333';
+    productsTitle.textContent = 'Available Products';
+    categoriesContainer.appendChild(productsTitle);
+    
+    shop.products.forEach(product => {
+        const productDiv = document.createElement('div');
+        productDiv.className = 'product-card';
+        productDiv.innerHTML = `
+            <div class="product-header">
+                <img src="${product.image}" alt="${product.name}" class="product-image">
+                <div class="product-details">
+                    <h3 class="product-name">${product.name}</h3>
+                    <p class="product-price">$${product.price.toFixed(2)}</p>
+                    <p class="product-description">${product.description}</p>
+                </div>
+            </div>
+        `;
+        productDiv.onclick = () => displayProductDetails(product, shop);
+        categoriesContainer.appendChild(productDiv);
+    });
+}
+
+// Display Product Details
+function displayProductDetails(product, shop) {
+    categoriesContainer.innerHTML = '';
+    currentView = 'product-details';
+    currentProduct = product;
+    currentShop = shop;
+    backBtn.style.display = 'block';
+    
+    const div = document.createElement('div');
+    div.className = 'product-card';
+    div.style.cursor = 'default';
+    div.innerHTML = `
+        <div class="product-header">
+            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <div class="product-details">
+                <h2 class="product-name">${product.name}</h2>
+                <p class="product-price">$${product.price.toFixed(2)}</p>
+                <p class="product-description">${product.description}</p>
+            </div>
+        </div>
+        <div class="shop-section">
+            <h3>Available at:</h3>
+            <div class="shop-card" style="cursor: pointer;" onclick="displayShopDetails(currentShop)">
+                <img src="${shop.image}" alt="${shop.name}" class="shop-image">
+                <div class="shop-info">
+                    <h3>${shop.name}</h3>
+                    <p class="shop-address">${shop.address}</p>
+                    <p class="category-description">${shop.description}</p>
+                </div>
+            </div>
+        </div>
+    `;
+    categoriesContainer.appendChild(div);
+}
+
+// Handle Back Button
+function handleBack() {
+    switch (currentView) {
+        case 'areas':
+            displayCategories();
+            break;
+        case 'shops':
+            displayAreas();
+            break;
+        case 'shop-details':
+            if (selectedCategory && selectedArea) {
+                displayShops();
+            } else {
+                displayCategories();
+            }
+            break;
+        case 'product-details':
+            if (currentShop) {
+                displayShopDetails(currentShop);
+            } else {
+                displayCategories();
+            }
+            break;
+    }
+}
+
+// Initialize the app
+init();
+</script>
+</body>
+</html>
