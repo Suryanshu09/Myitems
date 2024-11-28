@@ -1,170 +1,270 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SearchMyItems</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+<style>        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
         }
 
         body {
-            padding: 20px;
-            background-color: #f5f5f5;
+        padding: 20px;
+        background-color: #f5f5f5;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
+        max-width: 800px;
+        margin: 0 auto;
         }
 
         .search-container {
-            position: relative;
-            margin-bottom: 20px;
+        position: relative;
+        margin-bottom: 20px;
         }
 
         .search-bar {
-            width: 100%;
-            padding: 12px 40px 12px 12px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            outline: none;
-            transition: border-color 0.3s;
+        width: 100%;
+        padding: 12px 40px 12px 12px;
+        font-size: 16px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        outline: none;
+        transition: border-color 0.3s;
         }
 
         .search-bar:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
         }
 
         .clear-btn {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #666;
-            display: none;
-            padding: 5px;
-            font-size: 18px;
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #666;
+        display: none;
+        padding: 5px;
+        font-size: 18px;
         }
 
         .clear-btn:hover {
-            color: #333;
+        color: #333;
         }
 
         .suggestions-box {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-top: 5px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        max-height: 300px;
+        overflow-y: auto;
+        display: none;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-top: 5px;
         }
 
         .suggestion-item {
-            padding: 12px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        padding: 12px 15px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+        transition: background-color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
         }
-.suggestions-section {
-    border-bottom: 1px solid #eee;
-}
+        .suggestions-section {
+        border-bottom: 1px solid #eee;
+        }
 
-.suggestions-section:last-child {
-    border-bottom: none;
-}
+        .suggestions-section:last-child {
+        border-bottom: none;
+        }
 
-.suggestion-header {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
+        .suggestion-header {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        }
         .suggestion-item:last-child {
-            border-bottom: none;
+        border-bottom: none;
         }
 
         .suggestion-item:hover {
-            background-color: #f8f9fa;
+        background-color: #f8f9fa;
         }
 
         .suggestion-icon {
-            font-size: 20px;
-            color: #666;
+        font-size: 20px;
+        color: #666;
         }
 
         .categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
         }
 
         .category-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
         }
 
         .category-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .category-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
+        font-size: 32px;
+        margin-bottom: 10px;
         }
 
         .category-name {
-            font-weight: bold;
-            margin-bottom: 5px;
+        font-weight: bold;
+        margin-bottom: 5px;
         }
 
         .category-description {
-            font-size: 12px;
-            color: #666;
+        font-size: 12px;
+        color: #666;
         }
 
         .back-btn {
-            padding: 8px 16px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            display: none;
-            transition: background-color 0.2s;
+        padding: 8px 16px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-bottom: 20px;
+        display: none;
+        transition: background-color 0.2s;
         }
 
         .back-btn:hover {
-            background: #0056b3;
+        background: #0056b3;
+        }
+           .bag {
+            position: absolute;
+            left: 83px;
+            top: 21px;
         }
 
-        .shop-card {
+        .bag-body {
+            width: 27px;
+            height: 27px;
+            background-color: #545191;
+            clip-path: polygon(3% 0%, 98% 0%, 100% 100%, 0% 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bag-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 23px;
+           color: white;
+            align-self: center;
+        }
+
+        .handle {
+            width: 13px;
+            height: 9px;
+            border: 3px solid #545199;
+            border-bottom: none;
+            border-radius: 40px 40px 0 0;
+            position: absolute;
+            top: 13px;
+            left: 97px;
+            transform: translateX(-50%);
+        }
+.logo {
+            font-size: 20px;
+            font-weight: bold;
+           
+        }
+                .nav-menu {
+            list-style: none;
+            display: i;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #b0b0b0;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #ffffff;
+        }
+
+        .menu-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .side-menu {
+          
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #1e1e1e;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+            padding-top: 60px;
+            border-right: 1px solid #333;
+        }
+
+        .side-menu.open {
+            left: 0;
+        }
+
+        .side-menu a {
+            display: block;
+            padding: 15px 25px;
+            color: ;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .side-menu a:hover {
+            background-color: #2d2d2d;
+        }
+                .top-bar {
+                  padding-top: 0px;
+                  padding-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+           .shop-card {
             background: white;
             padding: 20px;
             border-radius: 12px;
@@ -268,11 +368,26 @@
         .hidden {
             display: none;
         }
-             
-    </style>
-</head>
+        </style>
 <body>
-    <div class="container">
+  <div class="top-bar">
+          <div class="logo">SearchmiiItems</div>
+        <div class="handle">
+        </div>
+        <div class="bag">
+          <div class="bag-body">
+            <div class="bag-text">My</div>
+          </div>
+        </div>
+        <nav>
+          <div class="nav-menu">
+          <button class="menu-button">☰</button>
+      </div>
+        </nav>
+        </div>
+       
+        
+ <div class="container">
         <div class="search-container">
             <input type="text" class="search-bar" placeholder="Search for products or shops...">
             <button class="clear-btn">✕</button>
@@ -281,11 +396,8 @@
         <button class="back-btn">← Back</button>
         <div class="categories"></div>
     </div>
-   
     <script>
-    // Database
-// Database
-const database = {
+    const database = {
     categories: [
         {
             name: 'Electronics',
@@ -331,14 +443,14 @@ const database = {
                     name: 'Smartphone X',
                     price: 599.99,
                     description: 'Latest smartphone with amazing features. 6.5" OLED display, 5G connectivity, 128GB storage',
-                    image: '/api/placeholder/150/150'
+                    image: 'https://media.istockphoto.com/id/1977348709/photo/laughing-young-businesswoman-talking-with-colleagues-in-an-office-hallway.webp?a=1&b=1&s=612x612&w=0&k=20&c=1QrGBVFBZyfg0zm_EETpeG49dbAjIPDEOxKRtf7L16Q='
                 },
                 {
                     id: 2,
                     name: 'Laptop Pro',
                     price: 1299.99,
                     description: '15" ultra-slim laptop with 16GB RAM, 512GB SSD, and dedicated graphics',
-                    image: '/api/placeholder/150/150'
+                    image: '/IMG-20241113-WA0001.jpg'
                 }
             ]
         },
@@ -348,7 +460,7 @@ const database = {
             category: 'Fashion',
             area: 'Downtown',
             address: '456 Fashion Ave, Downtown',
-            image: 'Screenshot_2024-11-24-08-58-31-44_f9a7afa717ced9e1fc9be9833291031a.jpg',
+            image: 'https://drive.google.com/uc?id=16qEHikcwi_p8YgaWMSKIJFf0MAUoB5qA',
             description: 'Trendy fashion for everyone',
             products: [
                 {
@@ -363,7 +475,7 @@ const database = {
                     name: 'Casual Sneakers',
                     price: 69.99,
                     description: 'Comfortable casual sneakers for daily wear',
-                    image: 'https://images.app.goo.gl/YQFDDw5ot2qsr6W4A'
+                    image: 'https://drive.google.com/file/d/16qEHikcwi_p8YgaWMSKIJFf0MAUoB5qA/view?usp=drivesdk'
                 }
             ]
         },
@@ -427,7 +539,126 @@ function setupEventListeners() {
         clearBtn.style.display = searchBar.value ? 'block' : 'none';
     });
 }
+// Add this to the end of your existing script
 
+// Create secret analytics container
+const secretAnalyticsContainer = document.createElement('div');
+secretAnalyticsContainer.innerHTML = `
+    <div id="secret-analytics" style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 2px solid #007bff;
+        border-radius: 8px;
+        padding: 20px;
+        z-index: 2000;
+        display: none;
+        max-width: 300px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    ">
+        <h3 style="margin-bottom: 15px; color: #333;">🕵️ Secret Search Analytics</h3>
+        <input type="password" id="secret-password" placeholder="Enter secret code" style="
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        ">
+        <button id="unlock-analytics" style="
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        ">Unlock Analytics</button>
+        <ul id="secret-search-list" style="
+            list-style: none;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        "></ul>
+    </div>
+`;
+document.body.appendChild(secretAnalyticsContainer);
+
+const secretAnalytics = document.getElementById('secret-analytics');
+const secretPasswordInput = document.getElementById('secret-password');
+const unlockButton = document.getElementById('unlock-analytics');
+const secretSearchList = document.getElementById('secret-search-list');
+
+// Search terms tracking
+const searchTerms = [];
+
+// Modify existing handleSearch function to track terms
+const originalHandleSearch = handleSearch;
+handleSearch = function(e) {
+  if (e.key === 'Enter') {
+    const searchTerm = searchBar.value.trim().toLowerCase();
+
+    if (searchTerm && !searchTerms.includes(searchTerm)) {
+      searchTerms.unshift(searchTerm);
+      if (searchTerms.length > 20) {
+        searchTerms.pop();
+      }
+    }
+
+    originalHandleSearch(e);
+  }
+};
+
+// Add a secret button to trigger analytics
+const secretTriggerBtn = document.createElement('button');
+secretTriggerBtn.textContent = '🕵️';
+secretTriggerBtn.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+`;
+document.body.appendChild(secretTriggerBtn);
+
+// Secret password
+const SECRET_PASSWORD = 'spy123';
+
+// Trigger analytics modal
+secretTriggerBtn.addEventListener('click', () => {
+  secretAnalytics.style.display = 'block';
+});
+
+// Unlock analytics
+unlockButton.addEventListener('click', () => {
+  if (secretPasswordInput.value === SECRET_PASSWORD) {
+    // Display search terms
+    secretSearchList.innerHTML = searchTerms
+      .map(term => `<li style="padding: 10px; border-bottom: 1px solid #eee;">${term}</li>`)
+      .join('') || '<li style="color: #666; text-align: center;">No searches yet</li>';
+  } else {
+    alert('Incorrect secret code!');
+  }
+  secretPasswordInput.value = '';
+});
+
+// Close analytics when clicking outside
+document.addEventListener('click', (e) => {
+  if (secretAnalytics.style.display === 'block' &&
+    !secretAnalytics.contains(e.target) &&
+    e.target !== secretTriggerBtn) {
+    secretAnalytics.style.display = 'none';
+  }
+});
 // Handle Search
 function handleSearch(e) {
     if (e.key === 'Enter') {
@@ -750,6 +981,8 @@ function handleBack() {
 
 // Initialize the app
 init();
+ 
 </script>
 </body>
+
 </html>
